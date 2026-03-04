@@ -17,17 +17,18 @@ cd "$PROJECT_ROOT"
 prune() {
   echo "=== Pruning all agent-generated artifacts ==="
   rm -rf docs/ src/ tests/
-  rm -f Dockerfile Makefile requirements.txt
-  rm -rf .github/
+  rm -f Dockerfile Makefile requirements.txt flake.nix flake.lock .envrc
+  rm -rf .direnv/
+  rm -rf output/ frames/
   rm -f *.db
   echo "Removed:"
   echo "  docs/                        (PRD, architecture)"
   echo "  src/                         (application code)"
   echo "  tests/                       (test suites)"
   echo "  Dockerfile, Makefile         (DevOps config)"
+  echo "  flake.nix, .envrc, .direnv/  (Nix dev environment)"
   echo "  requirements.txt             (dependencies)"
-  echo "  .github/                     (CI workflows)"
-  echo "  *.db                         (SQLite databases)"
+  echo "  output/, frames/             (generated transcripts and temp frames)"
   echo ""
   echo "Project is clean and ready for a new demo run."
 }
@@ -38,7 +39,7 @@ if [[ "${1:-}" == "prune" ]]; then
 fi
 
 # --- Normal mode: guided agent launch ---
-echo "=== Pixel Agent Demo ==="
+echo "=== Pixel Agent Demo — Video Transcription Tool ==="
 echo "Project root: $PROJECT_ROOT"
 echo ""
 
@@ -93,7 +94,7 @@ echo "=== All 5 agents launched! ==="
 echo ""
 echo "Agent coordination (via file polling):"
 echo "  PM           -> writes docs/prd.md"
-echo "  Architect    -> waits for PRD -> writes design docs + API spec"
-echo "  Developer    -> waits for architecture -> implements FastAPI service"
-echo "  QA Engineer  -> waits for code + spec -> writes and runs tests"
-echo "  DevOps       -> waits for code -> creates Dockerfile, Makefile, CI"
+echo "  Architect    -> waits for PRD -> writes pipeline design doc"
+echo "  Developer    -> waits for architecture -> implements CLI transcription tool"
+echo "  QA Engineer  -> waits for code -> writes and runs tests"
+echo "  DevOps       -> waits for code -> creates Dockerfile, Makefile"

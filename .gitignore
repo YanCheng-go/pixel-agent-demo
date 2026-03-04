@@ -15,4 +15,11 @@ tests/
 Dockerfile
 Makefile
 requirements.txt
-.github/
+flake.nix
+flake.lock
+.envrc
+.direnv/
+
+# Temp artifacts from video transcription
+output/
+frames/

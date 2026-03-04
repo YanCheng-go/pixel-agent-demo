@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **demo project** for knowledge sharing with VPs and engineers. It showcases multiple Claude Code agents simulating different SDLC roles, collaborating to build a URL shortener microservice from scratch. The [Pixel Agents](https://github.com/pablodelucca/pixel-agents) VS Code extension visualizes each agent as an animated pixel character in a virtual office.
+This is a **demo project** for knowledge sharing with VPs and engineers. It showcases multiple Claude Code agents simulating different SDLC roles, collaborating to build a video transcription CLI tool from scratch. The [Pixel Agents](https://github.com/pablodelucca/pixel-agents) VS Code extension visualizes each agent as an animated pixel character in a virtual office.
 
 **This is not a production project.** Prioritize demo-ability, clarity, and "wow factor" over production-readiness.
 
@@ -15,17 +15,16 @@ This is a **demo project** for knowledge sharing with VPs and engineers. It show
 | Role | Responsibility | Works in |
 |------|---------------|----------|
 | **Product Manager** | Writes PRD, user stories, acceptance criteria | `docs/` |
-| **Architect** | Designs API spec (OpenAPI), data model, system diagram | `docs/architecture/` |
-| **Developer** | Implements the URL shortener service | `src/` |
+| **Architect** | Designs pipeline architecture, component breakdown | `docs/architecture/` |
+| **Developer** | Implements the video transcription CLI tool | `src/` |
 | **QA Engineer** | Writes and runs tests, files bug reports | `tests/` |
-| **DevOps** | Sets up Dockerfile, CI config, Makefile | project root |
+| **DevOps** | Sets up Dockerfile, Makefile | project root |
 
-### What Gets Built: URL Shortener Microservice
+### What Gets Built: Video Transcription CLI Tool
 
-A simple REST API with endpoints:
-- `POST /shorten` — create a short URL
-- `GET /:code` — redirect to original URL
-- `GET /:code/stats` — get click count
+A CLI tool that extracts frames from a recorded video and uses a local vision LLM (Ollama + llama3.2-vision) to produce a timestamped markdown transcript describing what's happening on screen. Vision-only — no audio processing.
+
+Usage: `python src/main.py --video recording.mp4 --interval 5 --model llama3.2-vision:11b`
 
 ### Directory Structure
 
@@ -35,9 +34,12 @@ pixel-agent-demo/
 ├── docs/                  # PM and Architect outputs
 │   ├── prd.md
 │   └── architecture/
-│       ├── api-spec.yaml
 │       └── design.md
 ├── src/                   # Developer implementation
+│   ├── main.py            # CLI entry point
+│   ├── extractor.py       # ffmpeg frame extraction
+│   ├── analyzer.py        # Ollama vision API calls
+│   └── transcript.py      # Markdown assembly
 ├── tests/                 # QA test suites
 ├── Dockerfile
 ├── Makefile
@@ -48,10 +50,10 @@ pixel-agent-demo/
 ### Demo Flow
 
 1. **PM agent** writes the PRD and user stories
-2. **Architect agent** reads PRD, produces API spec and design doc
-3. **Developer agent** reads architecture docs, implements the service
-4. **QA agent** reads the spec, writes tests, runs them against the implementation
-5. **DevOps agent** reads the codebase, creates Dockerfile, Makefile, and CI config
+2. **Architect agent** reads PRD, produces pipeline design doc
+3. **Developer agent** reads architecture docs, implements the CLI tool
+4. **QA agent** reads the code, writes tests, runs them
+5. **DevOps agent** reads the codebase, creates Dockerfile and Makefile
 
 Each agent watches for its dependencies (upstream docs/code) before starting its work. The Pixel Agents extension shows all five characters working in the virtual office simultaneously.
 
@@ -65,9 +67,16 @@ Each agent watches for its dependencies (upstream docs/code) before starting its
 ### Launching Agents
 Open 5 separate VS Code terminals. In each terminal, run Claude Code with a role-specific prompt from `scripts/prompts/`. The Pixel Agents extension auto-detects each Claude Code instance and spawns a pixel character.
 
+## Development Environment
+
+- **Nix** manages system dependencies (ffmpeg, Python, etc.) via `flake.nix` or `shell.nix`
+- **uv** manages Python dependencies (replaces pip/venv)
+- **direnv** with `.envrc` auto-activates the Nix shell when you `cd` into the project — no manual `nix develop` needed
+- This means ffmpeg and Python are available automatically in any terminal opened in this project
+
 ## Conventions
 
 - Agents communicate through files, not direct messaging — each agent reads docs/code produced by upstream agents
 - Keep all agent prompt templates in `scripts/prompts/` as markdown files
-- The tech stack for the URL shortener itself is flexible (Python/FastAPI or Node/Express are both fine) — pick whichever makes the demo clearest
+- Tech stack: Python 3.12+, ffmpeg, Ollama with llama3.2-vision:11b
 - Agent prompts should include explicit instructions to pause/poll for upstream artifacts before proceeding
