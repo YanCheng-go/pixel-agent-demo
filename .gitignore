@@ -22,3 +22,6 @@ build/
 # Ignore the .ollama directory that may contain model data
 .ollama/
 scripts/data
+
+.pytest_cache/
+.venv/
