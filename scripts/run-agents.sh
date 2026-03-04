@@ -14,21 +14,27 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 # --- Prune: remove all agent-generated artifacts ---
+# Reads entries from the "Agent-generated files" section of .gitignore
 prune() {
   echo "=== Pruning all agent-generated artifacts ==="
-  rm -rf docs/ src/ tests/
-  rm -f Dockerfile Makefile requirements.txt flake.nix flake.lock .envrc
-  rm -rf .direnv/
-  rm -rf output/ frames/
-  rm -f *.db
-  echo "Removed:"
-  echo "  docs/                        (PRD, architecture)"
-  echo "  src/                         (application code)"
-  echo "  tests/                       (test suites)"
-  echo "  Dockerfile, Makefile         (DevOps config)"
-  echo "  flake.nix, .envrc, .direnv/  (Nix dev environment)"
-  echo "  requirements.txt             (dependencies)"
-  echo "  output/, frames/             (generated transcripts and temp frames)"
+  local in_section=false
+  while IFS= read -r line; do
+    # Start collecting after the agent-generated marker
+    if [[ "$line" == *"Agent-generated"* ]]; then
+      in_section=true
+      continue
+    fi
+    # Stop at the next comment section
+    if $in_section && [[ "$line" == \#* ]]; then
+      in_section=false
+      continue
+    fi
+    # Skip blank lines
+    if $in_section && [[ -n "$line" ]]; then
+      echo "  Removing: $line"
+      rm -rf "$line"
+    fi
+  done < .gitignore
   echo ""
   echo "Project is clean and ready for a new demo run."
 }
@@ -71,7 +77,7 @@ if [[ ! -f "flake.nix" ]]; then
 {
   description = "Video transcription CLI tool dev environment";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.nixpkgs.url = "git+https://github.com/NixOS/nixpkgs?ref=nixos-24.11";
 
   outputs = { self, nixpkgs }:
     let
