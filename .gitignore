@@ -1,25 +1,24 @@
+.DS_store
+.direnv
+env/
+venv/
 __pycache__/
 *.pyc
-.venv/
-.env
+*.pyo
+*.pyd
+*.log
+*.sqlite3
 *.db
-.pytest_cache/
-.DS_Store
-.mypy_cache/
-.ruff_cache/
-
-# Agent-generated files (pruned between demo sessions)
-docs/
-src/
-tests/
-Dockerfile
-Makefile
-requirements.txt
-flake.nix
-flake.lock
-.envrc
-.direnv/
-
-# Temp artifacts from video transcription
-output/
-frames/
+*.egg-info/
+dist/
+build/
+*.egg
+*.tar.gz
+*.zip
+.idea/
+.vscode/
+# Ignore the .env file that may contain sensitive information
+.env
+# Ignore the .ollama directory that may contain model data
+.ollama/
+scripts/data
