@@ -24,7 +24,7 @@ This is a **demo project** for knowledge sharing with VPs and engineers. It show
 
 A CLI tool that extracts frames from a recorded video and uses a local vision LLM (Ollama + llama3.2-vision) to produce a timestamped markdown transcript describing what's happening on screen. Vision-only — no audio processing.
 
-Usage: `python src/main.py --video recording.mp4 --interval 5 --model llama3.2-vision:11b`
+Usage: `python src/main.py --video recording.mp4 --interval 5 --model gemma3`
 
 ### Directory Structure
 
