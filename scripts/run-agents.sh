@@ -107,6 +107,7 @@ if [[ ! -f ".envrc" ]]; then
   echo "Created .envrc"
 fi
 
+git add flake.nix
 direnv allow
 echo "Dev environment ready (Python 3.12, ffmpeg, uv via Nix)"
 echo ""

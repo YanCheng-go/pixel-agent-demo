@@ -19,7 +19,7 @@ You own the technical architecture. Translate the PRD into concrete technical de
 1. Read `docs/prd.md` thoroughly.
 
 2. Create `docs/architecture/design.md` with:
-   - **Tech Stack**: Python 3.12+, ffmpeg (subprocess), Ollama (local LLM inference), llama3.2-vision:11b model
+   - **Tech Stack**: Python 3.12+, ffmpeg (subprocess), Ollama (local LLM inference), gemma3 model
    - **Pipeline Design**: Frame extraction (ffmpeg) → Vision analysis (Ollama API) → Transcript assembly (markdown)
    - **Component Overview**:
      - `src/main.py` — CLI entry point using argparse, orchestrates the pipeline

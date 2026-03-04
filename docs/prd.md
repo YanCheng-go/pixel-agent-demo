@@ -131,7 +131,7 @@ Description of what is visible in the frame at timestamp 5s.
 | Python 3.12+ | Runtime |
 | ffmpeg | Frame extraction from video files |
 | Ollama | Local LLM inference server |
-| llama3.2-vision:11b | Vision model for frame analysis |
+| gemma3 | Vision model for frame analysis |
 
 ## Success Metrics
 
