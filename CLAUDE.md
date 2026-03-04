@@ -75,6 +75,7 @@ Open 5 separate VS Code terminals. In each terminal, run Claude Code with a role
 - This provides Python 3.12, ffmpeg, and uv automatically in every terminal opened in the project
 - **uv** manages Python dependencies (replaces pip/venv)
 - If a system dependency (e.g., a CLI tool) is missing, add it to `flake.nix` and run `direnv reload`. If it's not available in Nix, ask the user before installing at the system level.
+- In `flake.nix`, always use `git+https://` for inputs (e.g., `git+https://github.com/NixOS/nixpkgs?ref=nixos-24.11`). Do not use the `github:` shorthand — it relies on the GitHub API which can fail with credential issues.
 
 ## Conventions
 

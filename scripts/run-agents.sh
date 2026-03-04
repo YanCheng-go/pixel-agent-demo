@@ -13,28 +13,29 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 cd "$PROJECT_ROOT"
 
-# --- Prune: remove all agent-generated artifacts ---
-# Reads entries from the "Agent-generated files" section of .gitignore
+# --- Prune: remove everything except whitelisted project scaffolding ---
+WHITELIST=(.git CLAUDE.md README.md scripts)
+
 prune() {
   echo "=== Pruning all agent-generated artifacts ==="
-  local in_section=false
-  while IFS= read -r line; do
-    # Start collecting after the agent-generated marker
-    if [[ "$line" == *"Agent-generated"* ]]; then
-      in_section=true
-      continue
+  for item in * .*; do
+    # Skip . and ..
+    [[ "$item" == "." || "$item" == ".." ]] && continue
+    # Check whitelist
+    local keep=false
+    for w in "${WHITELIST[@]}"; do
+      if [[ "$item" == "$w" ]]; then
+        keep=true
+        break
+      fi
+    done
+    if $keep; then
+      echo "  Keeping: $item"
+    else
+      echo "  Removing: $item"
+      rm -rf "$item"
     fi
-    # Stop at the next comment section
-    if $in_section && [[ "$line" == \#* ]]; then
-      in_section=false
-      continue
-    fi
-    # Skip blank lines
-    if $in_section && [[ -n "$line" ]]; then
-      echo "  Removing: $line"
-      rm -rf "$line"
-    fi
-  done < .gitignore
+  done
   echo ""
   echo "Project is clean and ready for a new demo run."
 }
