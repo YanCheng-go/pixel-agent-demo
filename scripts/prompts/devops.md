@@ -28,17 +28,7 @@ You own infrastructure and packaging. Create a Dockerfile and Makefile for the p
    - Note in a comment that this container expects to connect to an Ollama instance on the host (use `host.docker.internal:11434` or `--network host`)
    - Keep the image small and use a non-root user
 
-3. Create `flake.nix`:
-   - A Nix flake that provides a dev shell with: Python 3.12+, ffmpeg, and uv
-   - Use `nixpkgs` as the input
-   - The dev shell should make all system dependencies available so developers don't need to install anything manually
-
-4. Create `.envrc`:
-   - Use `use flake` so that direnv automatically activates the Nix dev shell when entering the project directory
-   - This ensures ffmpeg, Python, and uv are available in every terminal opened in the project
-   - After creating `.envrc`, run `direnv allow` so it takes effect immediately
-
-5. Create `Makefile` with these targets:
+3. Create `Makefile` with these targets:
    - `install` — `uv pip install -r requirements.txt`
    - `run` — `python src/main.py --video $(VIDEO) --interval $(INTERVAL) --model $(MODEL)` with sensible defaults
    - `test` — `python -m pytest tests/ -v`
@@ -48,7 +38,7 @@ You own infrastructure and packaging. Create a Dockerfile and Makefile for the p
 
 ## Constraints
 
-- Only create `Dockerfile`, `Makefile`, `flake.nix`, and `.envrc`. Do not touch `src/`, `tests/`, or `docs/`.
+- Only create `Dockerfile` and `Makefile`. Do not touch `src/`, `tests/`, or `docs/`.
 - No CI workflow — Ollama dependency makes CI impractical for this MVP.
 - Keep the Dockerfile small and secure (non-root user, minimal layers).
 - The Makefile should use `.PHONY` for all targets.

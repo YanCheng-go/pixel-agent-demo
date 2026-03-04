@@ -43,6 +43,14 @@ echo "=== Pixel Agent Demo — Video Transcription Tool ==="
 echo "Project root: $PROJECT_ROOT"
 echo ""
 
+# --- Check prerequisites ---
+for cmd in nix direnv; do
+  if ! command -v "$cmd" &>/dev/null; then
+    echo "ERROR: $cmd is not installed. Please install it first."
+    exit 1
+  fi
+done
+
 # Ensure prompt files exist
 for role in pm architect developer qa devops; do
   if [[ ! -f "scripts/prompts/${role}.md" ]]; then
@@ -53,6 +61,47 @@ done
 
 # Clean previous artifacts
 prune
+echo ""
+
+# --- Set up dev environment ---
+echo "=== Setting up dev environment ==="
+
+if [[ ! -f "flake.nix" ]]; then
+  cat > flake.nix <<'FLAKE'
+{
+  description = "Video transcription CLI tool dev environment";
+
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+  outputs = { self, nixpkgs }:
+    let
+      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+    in {
+      devShells = forAllSystems (system:
+        let pkgs = nixpkgs.legacyPackages.${system};
+        in {
+          default = pkgs.mkShell {
+            packages = [
+              pkgs.python312
+              pkgs.ffmpeg
+              pkgs.uv
+            ];
+          };
+        });
+    };
+}
+FLAKE
+  echo "Created flake.nix"
+fi
+
+if [[ ! -f ".envrc" ]]; then
+  echo "use flake" > .envrc
+  echo "Created .envrc"
+fi
+
+direnv allow
+echo "Dev environment ready (Python 3.12, ffmpeg, uv via Nix)"
 echo ""
 
 # --- Walk through each agent ---

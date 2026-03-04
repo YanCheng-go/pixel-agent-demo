@@ -62,6 +62,7 @@ Each agent watches for its dependencies (upstream docs/code) before starting its
 ### Prerequisites
 - VS Code with [Pixel Agents extension](https://marketplace.visualstudio.com/items?itemName=pablodelucca.pixel-agents)
 - Claude Code CLI installed and configured
+- Nix and direnv installed on the host machine
 - Open this repo in VS Code
 
 ### Launching Agents
@@ -69,14 +70,16 @@ Open 5 separate VS Code terminals. In each terminal, run Claude Code with a role
 
 ## Development Environment
 
-- **Nix** manages system dependencies (ffmpeg, Python, etc.) via `flake.nix` or `shell.nix`
+- **Nix** and **direnv** must be installed on the host machine (prerequisites)
+- `run-agents.sh` creates `flake.nix` and `.envrc` and runs `direnv allow` as a pre-step before launching agents
+- This provides Python 3.12, ffmpeg, and uv automatically in every terminal opened in the project
 - **uv** manages Python dependencies (replaces pip/venv)
-- **direnv** with `.envrc` auto-activates the Nix shell when you `cd` into the project — no manual `nix develop` needed
-- This means ffmpeg and Python are available automatically in any terminal opened in this project
+- If a system dependency (e.g., a CLI tool) is missing, add it to `flake.nix` and run `direnv reload`. If it's not available in Nix, ask the user before installing at the system level.
 
 ## Conventions
 
 - Agents communicate through files, not direct messaging — each agent reads docs/code produced by upstream agents
 - Keep all agent prompt templates in `scripts/prompts/` as markdown files
 - Tech stack: Python 3.12+, ffmpeg, Ollama with llama3.2-vision:11b
+- **Always use `uv` for Python package management** — use `uv pip install` instead of `pip install`, `uv venv` instead of `python -m venv`, etc.
 - Agent prompts should include explicit instructions to pause/poll for upstream artifacts before proceeding
